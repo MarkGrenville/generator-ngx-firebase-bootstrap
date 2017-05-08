@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, EventEmitter, Output} from "@angular/core";
 import {AuthService} from "app/shared/auth.service";
 import {Observable} from "rxjs";
 import {FormGroup, AbstractControl, FormBuilder, Validators} from "@angular/forms";
@@ -15,13 +15,16 @@ export class RegisterUserComponent implements OnInit {
     password: AbstractControl;
     password2: AbstractControl;
 
+    @Output() onSuccess = new EventEmitter();
+    @Output() onError = new EventEmitter();
+
     constructor(private authService: AuthService,
                 private fb: FormBuilder) {
         this.form = fb.group({
             'name': ['', Validators.required],
             'email': ['', Validators.compose([
                 Validators.required,
-                Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)]
+                Validators.email]
             )],
             'password': ['', Validators.required],
             'password2': ['', Validators.required]
@@ -39,10 +42,16 @@ export class RegisterUserComponent implements OnInit {
         return this.authService.isLoggedIn();
     }
 
-    onSubmit(value: any) {
+    onSubmit() {
         if (this.form.valid) {
-            this.authService.createUser(this.email.value, this.password.value, this.name.value);
-            this.form.reset();
+            this.authService.createUser(this.email.value, this.password.value, this.name.value)
+                .subscribe(
+                    () => {
+                        this.onSuccess.emit("success");
+                        this.form.reset();
+                    },
+                    err => this.onError.emit(err)
+                );
         }
     }
 

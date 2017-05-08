@@ -10,7 +10,9 @@ import {UserInfo} from "app/shared/user-info";
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-    title = 'app works! - <%= name %>';
+    private title = 'app works! - <%= name %>';
+    private alertType = null;
+    private alertMessage = "";
 
     constructor(private authService: AuthService, private router: Router) {
     }
@@ -22,8 +24,40 @@ export class AppComponent {
     currentUser(): Observable<UserInfo> {
         return this.authService.currentUser();
     }
+
     logout() {
         this.authService.logout();
         this.router.navigate(['/']);
+    }
+
+    onResetPasswordSuccess() {
+        this.alertType = "success";
+        this.alertMessage = "Reset Password Sent!";
+    }
+
+    onLoginSuccess() {
+        this.alertType = "success";
+        this.alertMessage = "Login Success!";
+    }
+
+    onRegisterSuccess() {
+        this.alertType = "success";
+        this.alertMessage = "User registered!";
+    }
+
+    onError(err) {
+        this.alertType = "danger";
+        this.alertMessage = err;
+    }
+
+    onLoggedOut() {
+        // Just reset any displayed messsage.
+        this.alertType = null;
+        this.alertMessage = "";
+    }
+
+    alertClosed() {
+        this.alertType = null;
+        this.alertMessage = "";
     }
 }
