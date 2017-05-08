@@ -18,30 +18,17 @@ import {HomePageComponent} from "./pages/home-page.component";
 import {RegisterPageComponent} from "./pages/register-page.component";
 import {AllInOnePageComponent} from "./pages/all-in-one-page.component";
 import {LoginPageComponent} from "./pages/login-page.component";
+import { LoggedInGuard } from "app/shared/logged-in-guard";
+import { DashboardPageComponent } from './pages/dashboard-page.component';
 
 
 const routes: Routes = [
-    {
-        path: 'register',
-        component: RegisterPageComponent
-    },
-    {
-        path: 'all-in-one',
-        component: AllInOnePageComponent
-    },
-    {
-        path: 'reset-password',
-        component: ResetPasswordComponent
-    },
-    {
-        path: 'login',
-        component: LoginPageComponent
-    },
-    {
-        path: '',
-        pathMatch: 'full',
-        component: HomePageComponent
-    }
+    { path: 'register', component: RegisterPageComponent },
+    { path: 'all-in-one', component: AllInOnePageComponent },
+    { path: 'reset-password', component: ResetPasswordComponent },
+    { path: 'login', component: LoginPageComponent },
+    { path: 'dashboard', component: DashboardPageComponent, canActivate: [LoggedInGuard] },
+    { path: '', component: HomePageComponent }
 ];
 
 @NgModule({
@@ -54,7 +41,8 @@ const routes: Routes = [
         HomePageComponent,
         RegisterPageComponent,
         AllInOnePageComponent,
-        LoginPageComponent
+        LoginPageComponent,
+        DashboardPageComponent
     ],
     imports: [
         BrowserModule,
@@ -67,7 +55,7 @@ const routes: Routes = [
         AngularFireAuthModule,
         RouterModule.forRoot(routes)
     ],
-    providers: [AuthService],
+    providers: [AuthService, LoggedInGuard],
     bootstrap: [AppComponent]
 })
 export class AppModule {
